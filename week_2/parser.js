@@ -4,6 +4,9 @@ let stack = [{type:"document", children:[]}];
 let currentTextNode = null;
 
 function emit(token){
+    if(token.type === "text")
+        return;
+
     let top = stack[stack.length - 1];
 
     if(token.type === "startTag"){
@@ -37,16 +40,17 @@ function emit(token){
             stack.pop();
         }
         currentTextNode = null;
-    }else if(token.type == "text"){
-        if(currentTextNode == null){
-            currentTextNode = {
-                type: "text",
-                content: ""
-            }
-            top.children.push(currentTextNode);
-        }
-        currentTextNode.content += token.content;
     }
+    // else if(token.type == "text"){
+    //     if(currentTextNode == null){
+    //         currentTextNode = {
+    //             type: "text",
+    //             content: ""
+    //         }
+    //         top.children.push(currentTextNode);
+    //     }
+    //     currentTextNode.content += token.content;
+    // }
 }
 
 
@@ -57,7 +61,7 @@ function data(c){
         return tagOpen;
     }else if(c == EOF){
         emit({
-            type:EOF
+            type:"EOF"
         });
         return;
     }else{
@@ -70,14 +74,17 @@ function data(c){
 }
 
 function tagOpen(c) {
-    if(c == '/'){
+    if(c == "/"){
+        currentToken = {
+            type: "endTag",
+            tagName:""
+        }
         return endTagOpen;
     }else if(c.match(/^[a-zA-Z]$/)){
         currentToken = {
             type: "startTag",
             tagName:""
         }
-
         return tagName(c);
     }else{
         return ;
@@ -155,7 +162,7 @@ function beforeAttributeValue(c) {
     }else if(c == ">"){
         //return data;
     }else{
-        return unQuotedAttributeValue;
+        return unQuotedAttributeValue(c);
     }
 }
 
@@ -269,4 +276,5 @@ module.exports.parseHTML = function parseHTML(html) {
         state = state(c);
     }
     state = state(EOF);
+    return stack[0];
 }
