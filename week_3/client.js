@@ -202,7 +202,7 @@ void async function run() {
             ['X-Foo2']: 'customed'
         },
         body: {
-            name: 'winter'
+            name: 'jack'
         }
     })
     let response = await request.send()
