@@ -200,6 +200,7 @@ function layout(element) {
             currentMain = itemStyle[mainEnd];
         }
     } else {
+        //process each flex line
         flexLines.forEach(function (items) {
             var mainSpace = items.mainSpace;
             var flexTotal = 0;
@@ -276,7 +277,7 @@ function layout(element) {
         }
     }
 
-    if(style.flexWrap == 'wrap-reverse'){
+    if(style.flexWrap === 'wrap-reverse'){
         crossBase = style[crossSize];
     }else{
         crossBase = 0;
@@ -293,7 +294,7 @@ function layout(element) {
         step = 0;
     }
     if(style.alignContent === 'center'){
-        crossSpace += crossSign * crossSpace / 2;
+        crossBase += crossSign * crossSpace / 2;
         step = 0;
     }
     if(style.alignContent === 'space-between'){
@@ -320,9 +321,8 @@ function layout(element) {
 
             var align = itemStyle.alignSelf || style.alignItems;
 
-            if(item === null){
-                itemStyle[crossSize] = (align === 'stretch') ?
-                lineCrossSize : 0;
+            if(itemStyle[crossSize] == null){
+                itemStyle[crossSize] = (align === 'stretch')? lineCrossSize : 0;
             }
 
             if(align === 'flex-start'){
